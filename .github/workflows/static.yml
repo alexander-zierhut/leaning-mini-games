@@ -1,0 +1,86 @@
+# GitHub Actions workflow to publish your mini‑games collection as a GitHub Pages site
+# Place this file at .github/workflows/deploy-pages.yml
+
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main   # change if your default branch is different
+  workflow_dispatch: {}
+
+# Required so the action can read the repo and deploy the site
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # ---------- Build job ----------
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out repository
+      - uses: actions/checkout@v4
+
+      # 2. Create the _site folder and copy game folders into it
+      #    while generating a simple index.html that lists every game.
+      - name: Build static site
+        run: |
+          set -eux
+          SITE_DIR="_site"
+          mkdir -p "$SITE_DIR"
+
+          # Start index.html
+          cat >"$SITE_DIR/index.html" <<'HTML'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <title>Learning Mini-Games</title>
+          </head>
+          <body>
+            <h1>Learning Mini-Games</h1>
+            <ul>
+          HTML
+
+          # Loop over top‑level directories that contain an index.html
+          for d in */ ; do
+            if [ -f "${d}index.html" ]; then
+              # Copy entire game folder into the site output
+              cp -r "$d" "$SITE_DIR/"
+              game="${d%/}"   # drop trailing slash
+              printf '  <li><a href="%s/index.html">%s</a></li>\n' "$game" "$game" >>"$SITE_DIR/index.html"
+            fi
+          done
+
+          # Close index.html
+          cat >>"$SITE_DIR/index.html" <<'HTML'
+            </ul>
+          </body>
+          </html>
+          HTML
+
+      # 3. Upload the built site as the Pages artifact
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3  # must be v3 or newer ([github.com](https://github.com/actions/upload-pages-artifact))
+        with:
+          path: _site  # folder created above
+
+  # ---------- Deploy job ----------
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
