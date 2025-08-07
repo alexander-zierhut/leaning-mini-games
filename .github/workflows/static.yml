@@ -1,6 +1,3 @@
-# GitHub Actions workflow to publish your mini‑games collection as a GitHub Pages site
-# Place this file at .github/workflows/deploy-pages.yml
-
 name: Deploy GitHub Pages
 
 on:
@@ -9,7 +6,6 @@ on:
       - main   # change if your default branch is different
   workflow_dispatch: {}
 
-# Required so the action can read the repo and deploy the site
 permissions:
   contents: read
   pages: write
@@ -49,8 +45,10 @@ jobs:
             <ul>
           HTML
 
-          # Loop over top‑level directories that contain an index.html
+          # Loop over top‑level directories (excluding the output directory itself)
           for d in */ ; do
+            [ "$d" = "$SITE_DIR/" ] && continue   # Skip the _site directory so we don't copy into itself
+
             if [ -f "${d}index.html" ]; then
               # Copy entire game folder into the site output
               cp -r "$d" "$SITE_DIR/"
@@ -68,7 +66,7 @@ jobs:
 
       # 3. Upload the built site as the Pages artifact
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3  # must be v3 or newer ([github.com](https://github.com/actions/upload-pages-artifact))
+        uses: actions/upload-pages-artifact@v3
         with:
           path: _site  # folder created above
 
