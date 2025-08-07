@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Word Order Adventure</title>
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <h1 id="title">
+            ✨ Word Order Adventure ✨
+        </h1>
+        <div id="task-counter"></div>
+
+        <!-- Word Areas -->
+        <div id="bank" class="drop-area" aria-label="word bank"></div>
+        <div id="dropzone" class="drop-area" aria-label="sentence builder"></div>
+
+        <!-- Controls -->
+        <div>
+            <button id="checkBtn">
+                Check ✅
+            </button>
+            <button id="nextBtn" style="display: none">
+                Next ➡️
+            </button>
+        </div>
+        <div id="message"></div>
+
+        <!-- Settings Button-->
+        <div id="settingsBtn" title="Teacher settings" aria-label="settings">
+            🔧
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal">
+            <div class="card">
+                <h2>Teacher Settings</h2>
+                <label for="teacherName">
+                    Your name
+                </label>
+                <input id="teacherName" placeholder="Alex" />
+                <label for="sentencesInput">
+                    Sentences (one per line)
+                </label>
+                <textarea id="sentencesInput" rows="6" placeholder="Type sentences here..."></textarea>
+                <div class="actions">
+                    <button id="saveConfig">
+                        Save &amp; Preview
+                    </button>
+                    <button id="generateLink">
+                        Generate Link
+                    </button>
+                    <button id="closeModal">
+                        Close
+                    </button>
+                </div>
+                <div id="shareLink" style="display: none"></div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+        <script src="script.js"></script>
+    </body>
+</html>

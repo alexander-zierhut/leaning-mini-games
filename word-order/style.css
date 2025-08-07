@@ -1,0 +1,237 @@
+:root {
+    --color-bg-start: #ffecd2;
+    --color-bg-end: #fcb69f;
+    --color-h1-start: #ff6ec4;
+    --color-h1-end: #7873f5;
+    --color-white: #ffffff;
+    --color-white-translucent-75: #ffffffbb;
+    --color-white-translucent-67: #ffffffaa;
+    --color-black-opacity-05: rgba(0, 0, 0, 0.05);
+    --color-black-opacity-15: rgba(0, 0, 0, 0.15);
+    --color-black-opacity-20: rgba(0, 0, 0, 0.2);
+    --color-black-opacity-25: rgba(0, 0, 0, 0.25);
+    --color-black-opacity-30: rgba(0, 0, 0, 0.3);
+    --color-drop-border: rgba(255, 255, 255, 0.6);
+    --color-drop-bg: rgba(255, 255, 255, 0.3);
+    --color-yellow: #fffb00;
+    --color-button-start: #ff9a9e;
+    --color-button-end: #fad0c4;
+    --color-gray: #ddd;
+    --color-gray-dark: #ccc;
+    --color-gray-light: #f3f3f3;
+    --color-text: #333333;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: clamp(16px, 4vw, 22px);
+}
+
+body {
+    margin: 0;
+    padding: 2.5rem 1rem;
+    font-family: 'Fredoka One', cursive;
+    background: linear-gradient(135deg, var(--color-bg-start) 0%, var(--color-bg-end) 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+h1 {
+    background: linear-gradient(90deg, var(--color-h1-start), var(--color-h1-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 1.6rem;
+    margin: 0 0 1.25rem;
+    text-align: center;
+}
+
+#task-counter {
+    font-size: 1.1rem;
+    margin-bottom: 0.6rem;
+    color: var(--color-white);
+    text-shadow: 0 2px 4px var(--color-black-opacity-15);
+}
+
+.drop-area {
+    min-height: 4.4rem;
+    border: 0.25rem dashed var(--color-drop-border);
+    border-radius: 0.85rem;
+    padding: 0.8rem 0.6rem;
+    margin: 0.75rem auto;
+    width: 95%;
+    max-width: 40rem;
+    background: var(--color-drop-bg);
+    backdrop-filter: blur(6px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    justify-content: center;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.drop-area.over {
+    border-color: var(--color-yellow);
+    transform: scale(1.02);
+}
+
+.word {
+    padding: 0.45rem 0.9rem;
+    border-radius: 0.65rem;
+    user-select: none;
+    cursor: grab;
+    font-size: 1rem;
+    color: var(--color-text);
+    border: 0.13rem solid var(--color-black-opacity-05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 4px var(--color-black-opacity-15);
+    touch-action: none;
+}
+
+.word.sortable-chosen {
+    opacity: 0.45;
+    transform: scale(0.85) rotate(-3deg);
+}
+
+button {
+    padding: 0.55rem 1.4rem;
+    border: none;
+    border-radius: 999px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 0.85rem 0.5rem;
+    color: var(--color-white);
+    background: linear-gradient(45deg, var(--color-button-start) 0%, var(--color-button-end) 100%);
+    box-shadow: 0 4px 6px var(--color-black-opacity-25);
+    transition: transform 0.15s, box-shadow 0.15s;
+    touch-action: manipulation;
+}
+
+button:hover {
+    transform: translateY(-0.1rem);
+    box-shadow: 0 6px 10px var(--color-black-opacity-25);
+}
+
+button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+#message {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 1.2rem;
+    min-height: 2rem;
+    color: var(--color-white);
+    text-shadow: 0 2px 4px var(--color-black-opacity-20);
+}
+
+#settingsBtn {
+    position: fixed;
+    bottom: 1.1rem;
+    right: 1.1rem;
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 50%;
+    background: var(--color-white-translucent-75);
+    backdrop-filter: blur(4px);
+    border: 0.12rem solid var(--color-white-translucent-67);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    cursor: pointer;
+    box-shadow: 0 2px 6px var(--color-black-opacity-30);
+    transition: transform 0.15s;
+}
+
+#settingsBtn:hover {
+    transform: rotate(20deg) scale(1.05);
+}
+
+#settingsModal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 1000;
+}
+
+#settingsModal .card {
+    width: 100%;
+    max-width: 28rem;
+    background: var(--color-white);
+    border-radius: 1rem;
+    padding: 1.6rem 1.8rem;
+    box-shadow: 0 8px 18px var(--color-black-opacity-25);
+    color: var(--color-text);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#settingsModal h2 {
+    margin-top: 0;
+    font-family: 'Fredoka One', cursive;
+    text-align: center;
+}
+
+#settingsModal label {
+    display: block;
+    margin-top: 0.7rem;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+#settingsModal input,
+#settingsModal textarea {
+    width: 100%;
+    padding: 0.45rem 0.6rem;
+    border: 0.12rem solid var(--color-gray);
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    resize: vertical;
+}
+
+#settingsModal .actions {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+#settingsModal .actions button {
+    flex: 1 1 48%;
+    margin: 0;
+}
+
+#shareLink {
+    margin-top: 0.8rem;
+    font-size: 0.8rem;
+    background: var(--color-gray-light);
+    border: 1px solid var(--color-gray-dark);
+    padding: 0.35rem 0.45rem;
+    border-radius: 0.4rem;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 26rem) {
+    h1 {
+        font-size: 1.4rem;
+    }
+
+    .word {
+        font-size: 1.05rem;
+    }
+}
