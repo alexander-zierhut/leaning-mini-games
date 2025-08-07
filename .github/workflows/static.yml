@@ -45,7 +45,7 @@ jobs:
             <ul>
           HTML
 
-          # Loop over top‑level directories (excluding the output directory itself)
+          # Loop over top-level directories (excluding the output directory itself)
           for d in */ ; do
             [ "$d" = "$SITE_DIR/" ] && continue   # Skip the _site directory so we don't copy into itself
 
@@ -53,7 +53,8 @@ jobs:
               # Copy entire game folder into the site output
               cp -r "$d" "$SITE_DIR/"
               game="${d%/}"   # drop trailing slash
-              printf '  <li><a href="%s/index.html">%s</a></li>\n' "$game" "$game" >>"$SITE_DIR/index.html"
+              # Link to the folder (index.html is served by default)
+              printf '  <li><a href="%s/">%s</a></li>\n' "$game" "$game" >>"$SITE_DIR/index.html"
             fi
           done
 
