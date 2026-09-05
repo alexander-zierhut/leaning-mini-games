@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Emoji Sentences</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗣️</text></svg>" />
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="../shared/base.css" />
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <h1 id="title" class="title">
+            ✨ Emoji Sentences ✨
+        </h1>
+        <div id="counter" class="counter"></div>
+        <div class="progress" aria-hidden="true">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+
+        <!-- Game board -->
+        <section id="board" class="panel board" aria-live="polite">
+            <div id="tenseChip" class="tense-chip"></div>
+            <div id="emojiRow" class="emoji-row" aria-label="emoji sentence"></div>
+            <div id="legend" class="legend" hidden></div>
+
+            <form id="answerForm" class="answer-row" autocomplete="off">
+                <input
+                    id="answerInput"
+                    type="text"
+                    placeholder="Say the sentence, then type it here…"
+                    autocapitalize="sentences"
+                    autocorrect="off"
+                    spellcheck="false"
+                    enterkeyhint="done"
+                    aria-label="Your English sentence"
+                />
+                <button type="button" id="micBtn" class="icon-btn mic" title="Speak your sentence" aria-label="Speak your sentence" hidden>
+                    🎤
+                </button>
+            </form>
+
+            <div class="buttons">
+                <button type="submit" form="answerForm" id="checkBtn">
+                    Check ✅
+                </button>
+                <button type="button" id="revealBtn" class="secondary">
+                    Show answer 👀
+                </button>
+                <button type="button" id="nextBtn" hidden>
+                    Next ➡️
+                </button>
+            </div>
+
+            <div id="message" class="message"></div>
+
+            <div id="answerBox" class="answer-box" hidden>
+                <span id="answerText"></span>
+                <button type="button" id="listenBtn" class="icon-btn" title="Listen" aria-label="Listen to the sentence">
+                    🔊
+                </button>
+            </div>
+        </section>
+
+        <!-- Overlay for welcome back / level up / finished -->
+        <div id="overlay" class="modal" aria-hidden="true" role="dialog" aria-labelledby="overlayTitle">
+            <div class="card overlay-card">
+                <div id="overlayEmoji" class="overlay-emoji"></div>
+                <h2 id="overlayTitle"></h2>
+                <p id="overlayText"></p>
+                <div id="overlayActions" class="actions"></div>
+            </div>
+        </div>
+
+        <!-- Settings Button -->
+        <button id="settingsBtn" class="gear" title="Teacher settings" aria-label="Teacher settings">
+            🔧
+        </button>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="settingsTitle">
+            <div class="card">
+                <h2 id="settingsTitle">Teacher Settings</h2>
+
+                <label for="teacherName">
+                    Your name
+                </label>
+                <input id="teacherName" placeholder="Alex" />
+
+                <fieldset id="tenseChecks">
+                    <legend>Tenses</legend>
+                    <label><input type="checkbox" value="present" checked /> 🔁 Present</label>
+                    <label><input type="checkbox" value="past" checked /> 🕰️ Past</label>
+                    <label><input type="checkbox" value="future" checked /> 🔮 Future</label>
+                </fieldset>
+
+                <label for="hintMode">
+                    Words under the emojis
+                </label>
+                <select id="hintMode">
+                    <option value="auto">Auto: all words → some words → emojis only</option>
+                    <option value="always">Always show the words</option>
+                    <option value="never">Never show the words</option>
+                </select>
+
+                <label for="sentencesInput">
+                    Sentences (one per line, easy → hard)
+                </label>
+                <textarea id="sentencesInput" rows="9" placeholder="👧(girl) 🍽️(to eat) 🍎(apple) | past | The girl ate an apple. / She ate an apple."></textarea>
+                <p class="hint-text">
+                    Format: <code>emojis(word) … | tense | answer / other answer</code><br />
+                    Tense is <code>present</code>, <code>past</code> or <code>future</code>. The words in brackets are the hints.
+                    Write verbs as <code>to …</code>, e.g. <code>🍽️(to eat)</code>: they get a blue card and the student must put them in the right tense.
+                    Several correct answers are separated by <code>/</code>.<br />
+                    The first third of the lines is level 1, the middle third level 2, the last third level 3.
+                    Helpers that always keep their word: ➡️ go to, ➕ and, 💭 because, ❌ not, ❓ question.
+                </p>
+
+                <div class="actions">
+                    <button id="saveConfig">
+                        Save &amp; Preview
+                    </button>
+                    <button id="generateLink">
+                        Generate Link
+                    </button>
+                    <button id="resetDefaults" class="secondary">
+                        Default sentences
+                    </button>
+                    <button id="closeModal" class="secondary">
+                        Close
+                    </button>
+                </div>
+                <div id="shareLink" class="share-link" hidden></div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+        <script src="../shared/base.js"></script>
+        <script src="script.js"></script>
+    </body>
+</html>
