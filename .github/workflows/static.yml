@@ -24,37 +24,55 @@ jobs:
       # 1. Check out repository
       - uses: actions/checkout@v4
 
-      # 2. Create the _site folder and copy game folders into it
-      #    while generating a simple index.html that lists every game.
+      # 2. Create the _site folder, copy the shared assets and every game folder
+      #    into it, and generate a styled index.html that lists every game.
       - name: Build static site
         run: |
           set -eux
           SITE_DIR="_site"
           mkdir -p "$SITE_DIR"
 
-          # Start index.html
+          # Shared assets (base.css / base.js) used by every game
+          if [ -d shared ]; then
+            cp -r shared "$SITE_DIR/"
+          fi
+
+          # Start index.html (styled like the games)
           cat >"$SITE_DIR/index.html" <<'HTML'
           <!DOCTYPE html>
           <html lang="en">
           <head>
             <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
             <title>Learning Mini-Games</title>
+            <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="shared/base.css">
+            <style>
+              ul { list-style: none; padding: 0; margin: 0; width: 95%; max-width: 28rem; display: grid; gap: 0.8rem; }
+              li a { display: block; text-align: center; text-decoration: none; color: #333; font-size: 1.15rem;
+                     padding: 0.9rem 1rem; border-radius: 1rem; background: #ffffffbb; backdrop-filter: blur(6px);
+                     box-shadow: 0 4px 8px rgba(0,0,0,0.15); transition: transform 0.15s, box-shadow 0.15s; }
+              li a:hover { transform: translateY(-0.15rem); box-shadow: 0 8px 14px rgba(0,0,0,0.2); }
+            </style>
           </head>
           <body>
-            <h1>Learning Mini-Games</h1>
+            <h1>🎮 Learning Mini-Games</h1>
             <ul>
           HTML
 
-          # Loop over top-level directories (excluding the output directory itself)
+          # Every top-level folder with an index.html is a game
           for d in */ ; do
-            [ "$d" = "$SITE_DIR/" ] && continue   # Skip the _site directory so we don't copy into itself
+            [ "$d" = "$SITE_DIR/" ] && continue   # don't copy the output into itself
+            [ "$d" = "shared/" ] && continue      # already copied above, not a game
 
             if [ -f "${d}index.html" ]; then
-              # Copy entire game folder into the site output
               cp -r "$d" "$SITE_DIR/"
               game="${d%/}"   # drop trailing slash
+              # Use the page <title> as the link text, fall back to the folder name
+              title=$(sed -n 's:.*<title>\(.*\)</title>.*:\1:p' "${d}index.html" | head -n 1)
+              [ -z "$title" ] && title="$game"
               # Link to the folder (index.html is served by default)
-              printf '  <li><a href="%s/">%s</a></li>\n' "$game" "$game" >>"$SITE_DIR/index.html"
+              printf '  <li><a href="%s/">%s</a></li>\n' "$game" "$title" >>"$SITE_DIR/index.html"
             fi
           done
 
